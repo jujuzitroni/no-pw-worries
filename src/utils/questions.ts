@@ -1,5 +1,5 @@
 import inqurirer from 'inquirer';
-import { Command } from '../types';
+import type { Command, Credential } from '../types';
 
 export const askForMainPassword = (): Promise<string> => {
   return inqurirer
@@ -34,4 +34,47 @@ export const chooseService = async (services: string[]): Promise<string> => {
     choices: services,
   });
   return answers.service;
+};
+
+// export const addService = async (): Promise<string> => {
+//   return inqurirer
+//   .prompt([
+//     {
+//       type: 'text',
+//       name: 'service',
+//       message: 'Enter service',
+//     },
+//     {
+//       type: 'text',
+//       name: 'username',
+//       message: 'Enter username',
+//     },
+//     {
+//       type: 'password',
+//       name: 'password',
+//       message: 'Enter password',
+//     },
+//   ]);
+//   .then((answers) => answers )
+// };
+
+export const askForCredential = async (): Promise<Credential> => {
+  const answers = await inqurirer.prompt<Credential>([
+    {
+      type: 'input',
+      name: 'service',
+      message: 'Enter service',
+    },
+    {
+      type: 'input',
+      name: 'username',
+      message: 'Enter username',
+    },
+    {
+      type: 'password',
+      name: 'password',
+      message: 'Enter password',
+    },
+  ]);
+  return answers;
 };

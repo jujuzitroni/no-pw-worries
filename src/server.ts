@@ -1,5 +1,6 @@
 import { printPassword } from './utils/messages';
 import {
+  askForCredential,
   askForMainPassword,
   chooseCommand,
   chooseService,
@@ -24,7 +25,11 @@ const start = async () => {
       }
       break;
     case 'add':
-      console.log('Add Case');
+      {
+        const newCredential = await askForCredential();
+        console.log(newCredential);
+      }
+
       break;
   }
 };
