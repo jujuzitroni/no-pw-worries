@@ -5,7 +5,7 @@ import {
   chooseService,
 } from './utils/questions';
 import { isMainPasswordValid } from './utils/validation';
-import { readCredentials } from './utils/credentials';
+import { readCredentials, writeCredentials } from './utils/credentials';
 
 const start = async () => {
   let mainPassword = await askForMainPassword();
@@ -34,7 +34,8 @@ const start = async () => {
     case 'add':
       {
         const newCredential = await askForCredential();
-        console.log(newCredential);
+        writeCredentials(newCredential);
+        console.log('new credential added');
       }
 
       break;
