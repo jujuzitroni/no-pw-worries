@@ -6,7 +6,7 @@ type DB = {
 };
 
 export const readCredentials = async (): Promise<Credential[]> => {
-  const response = await fs.readFile('./DB.json', 'utf-8');
+  const response = await fs.readFile('./db.json', 'utf-8');
   const data: DB = JSON.parse(response);
   return data.credentials;
 };
@@ -16,5 +16,5 @@ export const writeCredentials = async (
 ): Promise<void> => {
   const oldCredential: Credential[] = await readCredentials();
   const newDB: DB = { credentials: [...oldCredential, newCredential] };
-  await fs.writeFile('./DB.json', JSON.stringify(newDB, null, 2));
+  await fs.writeFile('./db.json', JSON.stringify(newDB, null, 2));
 };
