@@ -16,5 +16,5 @@ export const writeCredentials = async (
 ): Promise<void> => {
   const oldCredential: Credential[] = await readCredentials();
   const newDB: DB = { credentials: [...oldCredential, newCredential] };
-  await fs.writeFile('./db.json', JSON.stringify(newDB, null, 2));
+  await fs.writeFile('./DB.json', JSON.stringify(newDB, null, 2));
 };
