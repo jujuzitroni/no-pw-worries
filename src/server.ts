@@ -1,4 +1,3 @@
-import { printPassword } from './utils/messages';
 import {
   askForCredential,
   askForMainPassword,
@@ -30,7 +29,6 @@ const start = async () => {
           (credential) => credential.service === service
         );
         console.log(selectedService);
-        printPassword(service);
       }
       break;
     case 'add':
