@@ -1,14 +1,27 @@
+import dotenv from 'dotenv';
 import {
   askForCredential,
   askForMainPassword,
   chooseCommand,
-  chooseService,
 } from './utils/questions';
 import { isMainPasswordValid } from './utils/validation';
-import { readCredentials, writeCredentials } from './utils/credentials';
+import {
+  deleteCredential,
+  selectCredential,
+  writeCredential,
+} from './utils/credentials';
 import CryptoJS from 'crypto-js';
+import { connectDatabase, disconnectDatabase } from './utils/database';
+
+dotenv.config();
 
 const start = async () => {
+  if (process.env.MONGO_URL === undefined) {
+    throw new Error('Missing env MONGO_URL');
+  }
+
+  await connectDatabase(process.env.MONGO_URL);
+
   let mainPassword = await askForMainPassword();
   while (!(await isMainPasswordValid(mainPassword))) {
     console.log('Is invalid!');
@@ -20,33 +33,36 @@ const start = async () => {
 
   switch (command) {
     case 'list':
+    case 'delete':
       {
-        const credentials = await readCredentials();
-        const credentialServices = credentials.map(
-          (credential) => credential.service
-        );
-        const service = await chooseService(credentialServices);
-        const selectedService = credentials.find(
-          (credential) => credential.service === service
-        );
-
-        if (selectedService !== undefined) {
-          selectedService.password = CryptoJS.AES.decrypt(
-            selectedService.password,
+        const selectedCredential = await selectCredential();
+        if (command === 'list') {
+          selectedCredential.password = CryptoJS.AES.decrypt(
+            selectedCredential.password,
             mainPassword
           ).toString(CryptoJS.enc.Utf8);
-          console.log(selectedService);
+          console.log(selectedCredential);
+        } else {
+          const deleteSuccessful = await deleteCredential(
+            selectedCredential.service
+          );
+          if (deleteSuccessful) {
+            console.log(`${selectedCredential.service} was deleted`);
+          } else {
+            console.log(`${selectedCredential.service} delete failed`);
+          }
         }
       }
       break;
     case 'add':
       {
         const newCredential = await askForCredential();
-        writeCredentials(mainPassword, newCredential);
+        await writeCredential(mainPassword, newCredential);
         console.log('new credential added');
       }
 
       break;
   }
+  await disconnectDatabase();
 };
 start();

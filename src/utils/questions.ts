@@ -19,6 +19,7 @@ export const chooseCommand = async (): Promise<Command> => {
     message: 'What do you want to do?',
     choices: [
       { name: 'List all credentials', value: 'list' },
+      { name: 'Delete a credential', value: 'delete' },
       { name: 'Add new credential', value: 'add' },
     ],
   });
@@ -55,3 +56,7 @@ export const askForCredential = async (): Promise<Credential> => {
   ]);
   return answers;
 };
+
+// export const chooseAction = async (): Promise<string> => {
+//   const answers = await inquirer.prompt<{ action: string }>({});
+// };
