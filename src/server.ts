@@ -1,68 +1,47 @@
 import dotenv from 'dotenv';
-import {
-  askForCredential,
-  askForMainPassword,
-  chooseCommand,
-} from './utils/questions';
-import { isMainPasswordValid } from './utils/validation';
-import {
-  deleteCredential,
-  selectCredential,
-  writeCredential,
-} from './utils/credentials';
-import CryptoJS from 'crypto-js';
-import { connectDatabase, disconnectDatabase } from './utils/database';
-
 dotenv.config();
 
-const start = async () => {
-  if (process.env.MONGO_URL === undefined) {
-    throw new Error('Missing env MONGO_URL');
-  }
+import express from 'express';
+import {
+  deleteCredential,
+  readCredential,
+  readCredentials,
+  writeCredential,
+} from './utils/credentials';
+import { connectDatabase } from './utils/database';
 
-  await connectDatabase(process.env.MONGO_URL);
+if (process.env.MONGO_URL === undefined) {
+  throw new Error('Missing env MONGO_URL');
+}
 
-  let mainPassword = await askForMainPassword();
-  while (!(await isMainPasswordValid(mainPassword))) {
-    console.log('Is invalid!');
-    mainPassword = await askForMainPassword();
-  }
-  console.log('Is valid!');
+const app = express();
+const port = 5000;
 
-  const command = await chooseCommand();
+app.use(express.json());
 
-  switch (command) {
-    case 'list':
-    case 'delete':
-      {
-        const selectedCredential = await selectCredential();
-        if (command === 'list') {
-          selectedCredential.password = CryptoJS.AES.decrypt(
-            selectedCredential.password,
-            mainPassword
-          ).toString(CryptoJS.enc.Utf8);
-          console.log(selectedCredential);
-        } else {
-          const deleteSuccessful = await deleteCredential(
-            selectedCredential.service
-          );
-          if (deleteSuccessful) {
-            console.log(`${selectedCredential.service} was deleted`);
-          } else {
-            console.log(`${selectedCredential.service} delete failed`);
-          }
-        }
-      }
-      break;
-    case 'add':
-      {
-        const newCredential = await askForCredential();
-        await writeCredential(mainPassword, newCredential);
-        console.log('new credential added');
-      }
+app.get('/api/credentials', async (_request, response) => {
+  const credentials = await readCredentials();
+  response.json(credentials);
+});
 
-      break;
-  }
-  await disconnectDatabase();
-};
-start();
+app.get('/api/credentials/:service', async (request, response) => {
+  const credential = await readCredential(request.params.service);
+  response.json(credential);
+});
+
+app.post('/api/credentials', async (request, response) => {
+  await writeCredential('fuck', request.body);
+  response.send('credential saved in db');
+});
+
+app.delete('/api/credentials/:service', async (request, response) => {
+  await deleteCredential(request.params.service);
+  response.send('Delete credential');
+});
+
+connectDatabase(process.env.MONGO_URL).then(() => {
+  console.log('Database connected');
+  app.listen(port, () => {
+    console.log(`nopwworries listening at http://localhost:${port}`);
+  });
+});

@@ -11,6 +11,14 @@ export const readCredentials = async (): Promise<Credential[]> => {
     .toArray();
 };
 
+export const readCredential = async (service: string): Promise<Credential> => {
+  const credential = await getCredentialsCollection().findOne({ service });
+  if (!credential) {
+    throw new Error(`cannot find credential ${service}`);
+  }
+  return credential;
+};
+
 export const writeCredential = async (
   mainPassword: string,
   newCredential: Credential
