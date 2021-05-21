@@ -5,10 +5,13 @@
 }
 
 .hero {
-  background: khaki;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
   padding-bottom: 3em;
 }
 
 .hero img {
-  width: 20em;
+  width: 100%;
 }
