@@ -13,7 +13,7 @@ function Credential({ credential }: CredentialProps): JSX.Element {
         <span>{credential.service}</span>
         <span>{credential.username}</span>
         <button className={styles.button}>X</button>
-        <button>Show details</button>
+        <button className={styles.button}>show PW</button>
       </div>
       <div className={styles.pw}>
         <span>{credential.password}</span>
