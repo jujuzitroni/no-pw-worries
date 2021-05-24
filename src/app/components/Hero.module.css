@@ -15,3 +15,8 @@
 .hero img {
   width: 100%;
 }
+
+.hero_text {
+  position: absolute;
+  color: white;
+}
