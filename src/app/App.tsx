@@ -19,14 +19,10 @@ function App(): JSX.Element {
 
   return (
     <div className={styles.App}>
-      <Hero
-        title="no-pw-worries"
-        subtitle="be secure"
-        imgSrc="https://images.unsplash.com/photo-1584447128309-b66b7a4d1b63?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=977&q=80"
-      />
+      <Hero title="no-pw-worries" subtitle="be secure" />
 
       <main>
-        <ul>{credentialElements}</ul>
+        <ul className={styles.credentialList}>{credentialElements}</ul>
       </main>
     </div>
   );
